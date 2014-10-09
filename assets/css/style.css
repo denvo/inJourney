@@ -1,0 +1,16 @@
+/**
+ * Main stylesheet
+ */
+
+#sceneWrapper {
+	position:relative;
+	width: 1100px;
+	height: 800px;
+	border: 1px solid #888;
+}
+
+#sceneWrapper canvas {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
