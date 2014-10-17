@@ -14,6 +14,7 @@
 	var loading = 0;
 	var initialized = false;
 	var img;
+	var cellSize = 0;
 
 	function loadJSON(callback) {
 		ajax(IMAGES_JSON, function(err, json) {
@@ -25,6 +26,7 @@
 				} else {
 					SPRITES = json.sprites;
 					ANIMATIONS = json.animations;
+					cellSize = json.cellSize;
 					App.log.info(IMAGES_JSON + ' loaded');
 					callback(null);
 				}
@@ -56,7 +58,7 @@
 	}
 
 	// Interface
-	return {
+	return interface = {
 		/** Initialize ImageLoader and load images into cache */
 		init: function(callback) {
 			loadJSON(function(err) {
@@ -73,14 +75,27 @@
 			return ANIMATIONS && ANIMATIONS[animationId];
 		},
 
-		/** Draws sprite with give @spriteId on context @ctx at position @x, @y (cell coordinates) */
-		drawSprite: function(spriteId, ctx, x, y) {
+		getCellSize: function() {
+			return cellSize;
+		},
+
+		/** Draws sprite with give @spriteId on context @ctx at position @x, @y (cell coordinates) with rotation at @angle (rad) */
+		drawSprite: function(spriteId, ctx, x, y, angle) {
 			if(initialized && SPRITES[spriteId] && imageCache[SPRITES[spriteId].fileName]) {
+				if(angle) {
+					ctx.save();
+					ctx.translate((x + 0.5) * cellSize, (y + 0.5) * cellSize);
+					ctx.rotate(angle);
+					x = y = -0.5;
+				}
 				ctx.drawImage(imageCache[SPRITES[spriteId].fileName],
 					SPRITES[spriteId].x, SPRITES[spriteId].y,
 					SPRITES[spriteId].width, SPRITES[spriteId].height,
-					x * Scene.CELL_SIZE, y * Scene.CELL_SIZE,
+					x * cellSize, y * cellSize,
 					SPRITES[spriteId].width, SPRITES[spriteId].height);
+				if(angle) {
+					ctx.restore();
+				}
 			}
 		}	
 	}

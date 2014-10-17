@@ -39,6 +39,8 @@ var GameModel = (function() {
 
 	/** Object constructor */
 	var objectConstructors = {};
+
+	var isLevelCompleted = false;
 	
 	/** Load specified level form server and set it up */
 	function loadLevel(levelId, callback) {
@@ -141,11 +143,14 @@ var GameModel = (function() {
 			Scene.addObject(object);
 		}
 
+		isLevelCompleted = false;
+
 		if(!heroFound) {
 			App.log.error('No hero object was found in the level');
 		}
 		return heroFound;
 	}
+
 
 	function getCellBackground(x, y) {
 		if(!currentLevel) {
@@ -164,6 +169,10 @@ var GameModel = (function() {
 			loadLevel('1', callback);
 		},
 
+		getCellType: function(x, y) {
+			return getCellBackground(x,y);
+		},
+
 		/** Return sprite id for the background cell at specific point */
 		getBackgroundSpriteId: function(x, y) {
 			var bgType = getCellBackground(x, y);
@@ -173,6 +182,13 @@ var GameModel = (function() {
 		isWall: function(x, y) {
 			var bgType = getCellBackground(x, y);
 			return !bgType || bgType.match(/[a-z]/);
+		},
+
+		levelCompleted: function() {
+			if(!isLevelCompleted) {
+				isLevelCompleted = true;
+				alert('You won!');
+			}
 		},
 
 		registerObjectType: function(objectType, objectConstructor) {

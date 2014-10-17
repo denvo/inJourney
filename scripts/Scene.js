@@ -3,8 +3,7 @@
  */
 var Scene = (function(){
 	// Constants
-	var CELL_SIZE = 64;
-	var VIEWPORT_MOVE_SPEED = 300;
+	var VIEWPORT_MOVE_SPEED = 25;
 
 	// Wrapper
 	var sceneWrapper;
@@ -79,6 +78,7 @@ var Scene = (function(){
 
 	/** Draw the background */
 	function drawBackground() {
+		var cellSize = ImageLoader.getCellSize();
 		bgCtx.clearRect(0, 0, vpWidth, vpHeight);
 		var left = vpX - vpCWidth2;
 		var top = vpY - vpCHeight2;
@@ -88,7 +88,7 @@ var Scene = (function(){
 		var maxY = Math.ceil(vpY + vpCHeight2);
 
 		bgCtx.save();
-		bgCtx.translate(-left * CELL_SIZE, -top * CELL_SIZE);
+		bgCtx.translate(-left * cellSize, -top * cellSize);
 
 		var x, y;
 		for(y = minY; y <= maxY; ++ y) {
@@ -105,6 +105,7 @@ var Scene = (function(){
 
 	/** Draw objects */
 	function drawObjects(delta) {
+		var cellSize = ImageLoader.getCellSize();
 		// Each object has methods update(delay) which returns an object rectangle and draw(context) which draws the object on the context
 
 		// The idea is to update all objects according their zOrder and put objects which need to be drawn (using rect and checking
@@ -122,7 +123,7 @@ var Scene = (function(){
 		objectCtx.clearRect(0, 0, vpWidth, vpHeight);
 		var vpRect = new Rect(new Point(vpX - vpCWidth2, vpY - vpCHeight2), new Dimension(vpCWidth2 * 2, vpCHeight2 * 2));
 		objectCtx.save();
-		objectCtx.translate(-vpRect.point.x * CELL_SIZE, -vpRect.point.y * CELL_SIZE);
+		objectCtx.translate(-vpRect.point.x * cellSize, -vpRect.point.y * cellSize);
 
 		iterate(function(obj) {
 			if(obj.draw && vpRect.intersects(obj.rect)) {
@@ -156,9 +157,6 @@ var Scene = (function(){
 	 * Interface
 	 */
 	return {
-		/** cell size */
-		CELL_SIZE: CELL_SIZE,
-
 		/** Initialize the scene */
 		init: function() {
 			// Get elements
@@ -177,8 +175,6 @@ var Scene = (function(){
 			// Resize canvas
 			bgCanvas.width = objectCanvas.width = vpWidth = sceneWrapper.clientWidth;
 			bgCanvas.height = objectCanvas.height = vpHeight = sceneWrapper.clientHeight;
-			vpCWidth2 = vpWidth / CELL_SIZE / 2;
-			vpCHeight2 = vpHeight / CELL_SIZE / 2;
 
 			return true;
 		},
@@ -193,6 +189,19 @@ var Scene = (function(){
 				sceneWidth = width;
 				sceneHeight = height;
 			}
+
+			// Calculate the viewport size in cells
+			var cellSize = ImageLoader.getCellSize();
+			vpCWidth2 = vpWidth / cellSize / 2;
+			vpCHeight2 = vpHeight / cellSize / 2;
+		},
+
+		/** Get current scene position */
+		getPositionX: function() {
+			return vpX;
+		},
+		getPositionY: function() {
+			return vpY;
 		},
 
 		/** Set viewport position, if @animate is true, viewport will be moved smoothly */
@@ -216,6 +225,14 @@ var Scene = (function(){
 			}
 
 			updateBackground = true;
+		},
+
+		/** Get viewport dimension in cells */
+		getViewportWidth: function() {
+			return vpCWidth2 * 2;
+		},
+		getViewportHeight: function() {
+			return vpCHeight2 * 2;
 		},
 
 		/** Set or clear pause flag to stop/resume animation */

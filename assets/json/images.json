@@ -1,4 +1,5 @@
 {
+	"cellSize": 64,
 	"sprites": {
 		"road": {
 			"fileName": "sprites.png", 

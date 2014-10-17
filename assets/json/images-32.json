@@ -1,0 +1,149 @@
+{
+	"cellSize": 32,
+	"sprites": {
+		"road": {
+			"fileName": "sprites-32.png", 
+			"x": 0, 
+			"y": 0,
+			"width": 32,
+			"height": 32
+		},
+		"goal": {
+			"fileName": "sprites-32.png", 
+			"x": 32, 
+			"y": 0,
+			"width": 32,
+			"height": 32
+		},
+		"wall_single": {
+			"fileName": "sprites-32.png", 
+			"x": 64, 
+			"y": 0,
+			"width": 32,
+			"height": 32
+		},
+		"wall_lt": {
+			"fileName": "sprites-32.png", 
+			"x": 0, 
+			"y": 32,
+			"width": 32,
+			"height": 32
+		},
+		"wall_t": {
+			"fileName": "sprites-32.png", 
+			"x": 32, 
+			"y": 32,
+			"width": 32,
+			"height": 32
+		},
+		"wall_rt": {
+			"fileName": "sprites-32.png", 
+			"x": 64, 
+			"y": 32,
+			"width": 32,
+			"height": 32
+		},
+		"wall_l": {
+			"fileName": "sprites-32.png", 
+			"x": 0, 
+			"y": 64,
+			"width": 32,
+			"height": 32
+		},
+		"wall_center": {
+			"fileName": "sprites-32.png", 
+			"x": 32, 
+			"y": 64,
+			"width": 32,
+			"height": 32
+		},
+		"wall_r": {
+			"fileName": "sprites-32.png", 
+			"x": 64, 
+			"y": 64,
+			"width": 32,
+			"height": 32
+		},
+		"wall_lb": {
+			"fileName": "sprites-32.png", 
+			"x": 0, 
+			"y": 96,
+			"width": 32,
+			"height": 32
+		},
+		"wall_b": {
+			"fileName": "sprites-32.png", 
+			"x": 32, 
+			"y": 96,
+			"width": 32,
+			"height": 32
+		},
+		"wall_rb": {
+			"fileName": "sprites-32.png", 
+			"x": 64, 
+			"y": 96,
+			"width": 32,
+			"height": 32
+		},
+		"wall_ro": {
+			"fileName": "sprites-32.png", 
+			"x": 0, 
+			"y": 128,
+			"width": 32,
+			"height": 32
+		},
+		"wall_h": {
+			"fileName": "sprites-32.png", 
+			"x": 32, 
+			"y": 128,
+			"width": 32,
+			"height": 32
+		},
+		"wall_lo": {
+			"fileName": "sprites-32.png", 
+			"x": 64, 
+			"y": 128,
+			"width": 32,
+			"height": 32
+		},
+		"wall_bo": {
+			"fileName": "sprites-32.png", 
+			"x": 0, 
+			"y": 160,
+			"width": 32,
+			"height": 32
+		},
+		"wall_v": {
+			"fileName": "sprites-32.png", 
+			"x": 32, 
+			"y": 160,
+			"width": 32,
+			"height": 32
+		},
+		"wall_to": {
+			"fileName": "sprites-32.png", 
+			"x": 64, 
+			"y": 160,
+			"width": 32,
+			"height": 32
+		},
+		"hero": {
+			"fileName": "sprites-32.png", 
+			"x": 0, 
+			"y": 192,
+			"width": 32,
+			"height": 32
+		},
+		"enemy": {
+			"fileName": "sprites-32.png", 
+			"x": 32, 
+			"y": 192,
+			"width": 32,
+			"height": 32
+		}
+	},
+
+	"animations": {
+
+	}	
+}

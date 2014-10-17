@@ -10,6 +10,8 @@ function HeroObject(data) {
 }
 
 (function() {
+	var SCENE_MOVE_THRESHOLD = 3;
+
 	/** Start movement in specific direction */
 	function startMovement(direction, shiftX, shiftY) {
 		var newX = this.getX() + shiftX, newY = this.getY() + shiftY;
@@ -46,6 +48,7 @@ function HeroObject(data) {
 		ROTATE_DURATION: 100, 
 
 		update: function(delta) {
+			var timeRemaining = 0;
 			if(this.rotateAnimation) {
 				this.rotateAnimation.update(delta);
 				this.direction = this.rotateAnimation.getValue();
@@ -55,22 +58,48 @@ function HeroObject(data) {
 					this.direction = (this.direction + 360) % 360;
 				}
 			} else if(this.moveAnimation) {
+				// This small hack allows smooth movement if direction remains the same
+				if(this.moveAnimation.timeRemaining < delta) {
+					timeRemaining = delta - this.moveAnimation.timeRemaining;
+				}
 				this.moveAnimation.update(delta);
 				this.moveTo(this.moveAnimation.getX(), this.moveAnimation.getY());
 				if(this.moveAnimation.isDone()) {
 					this.moveAnimation = null;
 				}
-			} else {
+			}
+
+			// Move is completed
+			if(!this.moveAnimation && !this.rotateAnimation) {
+				// Shift the scene, if necessary
+				var heroVPShiftX = Scene.getViewportWidth() / 2 - Math.abs(this.getX() - Scene.getPositionX());
+				var heroVPShiftY = Scene.getViewportHeight() / 2 - Math.abs(this.getY() - Scene.getPositionY());
+				if(heroVPShiftX < SCENE_MOVE_THRESHOLD || heroVPShiftY < SCENE_MOVE_THRESHOLD) {
+					var newSceneX = (heroVPShiftX < SCENE_MOVE_THRESHOLD) ? this.getX() : Scene.getPositionX();
+					var newSceneY = (heroVPShiftY < SCENE_MOVE_THRESHOLD) ? this.getY() : Scene.getPositionY();
+					Scene.setPosition(newSceneX, newSceneY, true);
+				}
+
+				// Check if the goal is achieved
+				if(GameModel.getCellType(this.getX(), this.getY()) == '*') {
+					GameModel.levelCompleted();
+				}
+
+				// Check the controls
 				(App.isKeyPressed(37) && startMovement.call(this, 180, -1, 0))
 					|| (App.isKeyPressed(39) && startMovement.call(this, 0, 1, 0))
-					|| (App.isKeyPressed(38) && startMovement.call(this, 90, 0, -1))
-					|| (App.isKeyPressed(40) && startMovement.call(this, 270, 0, 1));
+					|| (App.isKeyPressed(38) && startMovement.call(this, 270, 0, -1))
+					|| (App.isKeyPressed(40) && startMovement.call(this, 90, 0, 1));
+				if(this.moveAnimation && !this.rotateAnimation && timeRemaining > 0) {
+					// Continue movement
+					this.moveAnimation.update(timeRemaining);
+				}
 			}
+
 		},
 
 		draw: function(ctx) {
-			// TODO: rotation
-			ImageLoader.drawSprite('hero', ctx, this.getX(), this.getY());
+			ImageLoader.drawSprite('hero', ctx, this.getX(), this.getY(), this.direction * Math.PI / 180);
 		},
 		
 	})
