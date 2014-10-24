@@ -245,10 +245,10 @@ var Scene = (function(){
 
 		/** Add an object to the scene */
 		addObject: function(obj) {
-			if(!sceneObjects[obj.zOrder]) {
-				sceneObjects[obj.zOrder] = [];
+			if(!sceneObjects[obj.ZORDER]) {
+				sceneObjects[obj.ZORDER] = [];
 			}
-			sceneObjects[obj.zOrder].push(obj);
+			sceneObjects[obj.ZORDER].push(obj);
 			App.log.debug('Object added: ' + obj);
 		},
 
@@ -256,10 +256,10 @@ var Scene = (function(){
 		removeObject: function(obj) {
 			iterate(function(item, index) {
 				if(item === obj) {
-					sceneObjects[obj.zOrder].splice(index, 1);
+					sceneObjects[obj.ZORDER].splice(index, 1);
 					return false;
 				}
-			}, obj.zOrder);
+			}, obj.ZORDER);
 			App.log.debug('Object removed: ' + obj);
 		},
 

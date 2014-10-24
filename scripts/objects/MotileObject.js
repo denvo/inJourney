@@ -1,6 +1,6 @@
 /** Motile object can move - base class for all dynamic objects */
-function MotileObject(type, x, y, width, height, zOrder) {
-	SceneObject.call(this, type, x, y, width, height, zOrder);
+function MotileObject(x, y, width, height) {
+	SceneObject.call(this, x, y, width, height);
 	// Movement animation
 	this.moveAnimation = null;
 	// Rotation animation
@@ -84,11 +84,7 @@ function MotileObject(type, x, y, width, height, zOrder) {
 			App.log.debug('Start moving to ' + newX + ', ' + newY);
 
 			return true;
-		},	
-
-		/** Called after every movement cycle */
-		afterMovement: function() {
-		}
+		}	
 		
 	});
 

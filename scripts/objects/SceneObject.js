@@ -1,10 +1,8 @@
 /**
  * Scene object - root class
  */
-function SceneObject(type, x, y, width, height, zOrder) {
-	this.type = type;
+function SceneObject(x, y, width, height) {
 	this.rect = new Rect(new Point(x, y), new Dimension(width, height));
-	this.zOrder = zOrder;
 }
 
 extend(SceneObject.prototype, {

@@ -2,7 +2,7 @@
  * Hero object
  */
 function HeroObject(data) {
-	MotileObject.call(this, this.TYPE, data.position.x, data.position.y, 1, 1, this.ZORDER);
+	MotileObject.call(this, data.position.x, data.position.y, 1, 1);
 }
 
 (function() {
