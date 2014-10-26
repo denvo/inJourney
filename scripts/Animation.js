@@ -11,13 +11,13 @@
  * a.getValue();    // gets current value
  * a.isDone();		// returns true if animation is done
  */
-function ValueAnimation(start, end, duration) {
-	this.timeRemaining = duration;
-	this.currentValue = start;
-	this.targetValue = end;
-}
-
-extend(ValueAnimation.prototype, {
+ij.registerClass('ValueAnimation', null, {
+	onCreate: function(start, end, duration) {
+		this.timeRemaining = duration;
+		this.currentValue = start;
+		this.targetValue = end;
+	},
+	
 	update: function(delta) {
 		if(delta >= this.timeRemaining) {
 			this.currentValue = this.targetValue;
@@ -45,18 +45,14 @@ extend(ValueAnimation.prototype, {
  * a.getX(); a.getY();		// returns current position
  * a.isDone();				// returns true if animation is done
  */
-function PositionAnimation(x1, y1, x2, y2, duration) {
-	ValueAnimation.call(this, 0, 1, duration);
-	this.startX = x1;
-	this.startY = y1;
-	this.deltaX = x2 - x1;
-	this.deltaY = y2 - y1;
-}
-
-extend(PositionAnimation.prototype, {
-	update: ValueAnimation.prototype.update,
-
-	isDone: ValueAnimation.prototype.isDone,
+ij.registerClass('PositionAnimation', 'ValueAnimation', {
+	onCreate: function(x1, y1, x2, y2, duration) {
+		ij.ValueAnimation.call(this, 0, 1, duration);
+		this.startX = x1;
+		this.startY = y1;
+		this.deltaX = x2 - x1;
+		this.deltaY = y2 - y1;
+	},
 
 	getX: function() {
 		return this.startX + this.currentValue * this.deltaX;

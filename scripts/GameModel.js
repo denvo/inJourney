@@ -1,7 +1,7 @@
 /**
  * Game model
  */
-var GameModel = (function() {
+ij.GameModel = (function() {
 	/** Location and name of level description files */
 	var LEVEL_FILE_PREFIX = "assets/json/";
 	var LEVEL_FILES = {
@@ -49,7 +49,7 @@ var GameModel = (function() {
 			callback('Invalid level id ' + levelId);
 			return;
 		}
-		ajax(LEVEL_FILE_PREFIX + levelFileName, function (err, json) {
+		ij.Util.ajax(LEVEL_FILE_PREFIX + levelFileName, function (err, json) {
 			if(err) {
 				callback(err);
 			} else {
@@ -68,7 +68,7 @@ var GameModel = (function() {
 					return;
 				}
 
-				App.log.info('Level loaded: ' + levelId);
+				ij.App.log.info('Level loaded: ' + levelId);
 				callback(null);
 			}
 		}, {
@@ -87,7 +87,7 @@ var GameModel = (function() {
 		var x, y, row, newRow, cell, newCell, left, right, top, bottom;
 		for(y = 0; y < height; ++ y) {
 			if(!currentLevel.background[y]) {
-				App.log.error('No background data string for y=' + y);
+				ij.App.log.error('No background data string for y=' + y);
 				error = true;
 			} else {
 				row = currentLevel.background[y];
@@ -95,13 +95,13 @@ var GameModel = (function() {
 				for(x = 0; x < width; ++ x) {
 					cell = row[x];
 					if(!cell) {
-						App.log.error('No background data character for x=' + x + ', y=' + y);
+						ij.App.log.error('No background data character for x=' + x + ', y=' + y);
 						error = true;
 					} else if(cell == 'x') {
-						left = GameModel.isWall(x - 1, y) ? 1 : 0;
-						right = GameModel.isWall(x +1, y) ? 2 : 0;
-						top = GameModel.isWall(x, y - 1) ? 4 : 0;
-						bottom = GameModel.isWall(x, y + 1) ? 8 : 0;
+						left = ij.GameModel.isWall(x - 1, y) ? 1 : 0;
+						right = ij.GameModel.isWall(x +1, y) ? 2 : 0;
+						top = ij.GameModel.isWall(x, y - 1) ? 4 : 0;
+						bottom = ij.GameModel.isWall(x, y + 1) ? 8 : 0;
 
 						newCell = BG_CONVERT_TABLE[left + right + top + bottom];
 						newRow += newCell;
@@ -120,8 +120,8 @@ var GameModel = (function() {
 	function setupScene() {
 		var heroFound = false;
 		
-		Scene.setDimensions(currentLevel.dimension);
-		Scene.removeAllObjects();
+		ij.Scene.setDimensions(currentLevel.dimension);
+		ij.Scene.removeAllObjects();
 
 		if(!currentLevel.objects || !currentLevel.objects.length) {
 			return false;
@@ -130,23 +130,23 @@ var GameModel = (function() {
 		var n;
 		for(n = 0; n < currentLevel.objects.length; ++ n) {
 			var objectData = currentLevel.objects[n];
-			if(objectData.type == HeroObject.prototype.TYPE) {
+			if(objectData.type == ij.HeroObject.prototype.TYPE) {
 				heroFound = true;
-				Scene.setPosition(objectData.position);
+				ij.Scene.setPosition(objectData.position);
 			}
 			var objectConstructor = objectConstructors[objectData.type];
 			if(!objectConstructor) {
-				App.log.error('Cannot find constructor for type ' + objectData.type);
+				ij.App.log.error('Cannot find constructor for type ' + objectData.type);
 				return false;
 			}
 			var object = new objectConstructor(objectData);
-			Scene.addObject(object);
+			ij.Scene.addObject(object);
 		}
 
 		isLevelCompleted = false;
 
 		if(!heroFound) {
-			App.log.error('No hero object was found in the level');
+			ij.App.log.error('No hero object was found in the level');
 		}
 		return heroFound;
 	}
@@ -193,7 +193,7 @@ var GameModel = (function() {
 
 		registerObjectType: function(objectType, objectConstructor) {
 			if(objectConstructors[objectType]) {
-				App.log.error('Type ' + objectType + ' was already registered');
+				ij.App.log.error('Type ' + objectType + ' was already registered');
 			} else {
 				objectConstructors[objectType] = objectConstructor;
 			}

@@ -2,7 +2,7 @@
  * Image Loader
  */
 
- var ImageLoader = (function(){
+ij.ImageLoader = (function(){
 	var IMAGE_PREFIX = 'assets/img/';
 	var IMAGES_JSON = 'assets/json/images.json';
 
@@ -17,7 +17,7 @@
 	var cellSize = 0;
 
 	function loadJSON(callback) {
-		ajax(IMAGES_JSON, function(err, json) {
+		ij.Util.ajax(IMAGES_JSON, function(err, json) {
 			if(err) {
 				callback(err);
 			} else {
@@ -27,7 +27,7 @@
 					SPRITES = json.sprites;
 					ANIMATIONS = json.animations;
 					cellSize = json.cellSize;
-					App.log.info(IMAGES_JSON + ' loaded');
+					ij.App.log.info(IMAGES_JSON + ' loaded');
 					callback(null);
 				}
 			}
@@ -41,7 +41,7 @@
 			if(SPRITES[spriteId] && !imageCache[SPRITES[spriteId].fileName]) {
 				img = new Image();
 				img.addEventListener("load", function() {
-					App.log.info(this.src + ' loaded');
+					ij.App.log.info(this.src + ' loaded');
 					if(-- loading == 0) {
 						initialized = true;
 						callback && callback(null);

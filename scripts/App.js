@@ -2,7 +2,7 @@
  * Game App
  */
 
-var App = (function() {
+ij.App = (function() {
 
 	/** Keyboard state */
 	var keyState = {};
@@ -39,7 +39,7 @@ var App = (function() {
 	/** Main run method */
 	function run() {
 		// Unpause scene
-		Scene.setPause(false);
+		ij.Scene.setPause(false);
 	}
 
 
@@ -48,21 +48,21 @@ var App = (function() {
 			initEventListeners();
 
 			// Synchronous init methods
-			if(!Scene.init()) {
-				App.log.error('Scene initialization failed');
+			if(!ij.Scene.init()) {
+				ij.App.log.error('Scene initialization failed');
 				return;
 			}
 
 			// This can take some time - continue after it finishes
-			chainCall(function(err) {
+			ij.Util.chainCall(function(err) {
 				if(err) {
-					App.log.error(err);
+					ij.App.log.error(err);
 				} else {
-					App.log.debug('Game is ready to go!');
+					ij.App.log.debug('Game is ready to go!');
 					// Run the game
 					run();
 				}
-			}, ImageLoader.init, GameModel.init);
+			}, ij.ImageLoader.init, ij.GameModel.init);
 		},
 		/** Log object */
 		log: initLog(),
@@ -77,5 +77,5 @@ var App = (function() {
 
 // Initialize the app on load
 window.addEventListener("load", function() {
-	App.start();
+	ij.App.start();
 });

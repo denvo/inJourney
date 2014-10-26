@@ -1,7 +1,7 @@
 /**
  * Scene
  */
-var Scene = (function(){
+ij.Scene = (function(){
 	// Constants
 	var VIEWPORT_MOVE_SPEED = 25;
 
@@ -78,7 +78,7 @@ var Scene = (function(){
 
 	/** Draw the background */
 	function drawBackground() {
-		var cellSize = ImageLoader.getCellSize();
+		var cellSize = ij.ImageLoader.getCellSize();
 		bgCtx.clearRect(0, 0, vpWidth, vpHeight);
 		var left = vpX - vpCWidth2;
 		var top = vpY - vpCHeight2;
@@ -93,9 +93,9 @@ var Scene = (function(){
 		var x, y;
 		for(y = minY; y <= maxY; ++ y) {
 			for(x = minX; x <= maxX; ++ x) {
-				var bgSpriteId = GameModel.getBackgroundSpriteId(x, y);
+				var bgSpriteId = ij.GameModel.getBackgroundSpriteId(x, y);
 				if(bgSpriteId) {
-					ImageLoader.drawSprite(bgSpriteId, bgCtx, x, y);
+					ij.ImageLoader.drawSprite(bgSpriteId, bgCtx, x, y);
 				}
 			}
 		}
@@ -105,7 +105,7 @@ var Scene = (function(){
 
 	/** Draw objects */
 	function drawObjects(delta) {
-		var cellSize = ImageLoader.getCellSize();
+		var cellSize = ij.ImageLoader.getCellSize();
 		// Each object has methods update(delay) which returns an object rectangle and draw(context) which draws the object on the context
 
 		// The idea is to update all objects according their zOrder and put objects which need to be drawn (using rect and checking
@@ -117,11 +117,11 @@ var Scene = (function(){
 			}
 		});
 		objectsToDelete.forEach(function(obj) {
-			Scene.removeObject(obj);
+			ij.Scene.removeObject(obj);
 		});
 
 		objectCtx.clearRect(0, 0, vpWidth, vpHeight);
-		var vpRect = new Rect(new Point(vpX - vpCWidth2, vpY - vpCHeight2), new Dimension(vpCWidth2 * 2, vpCHeight2 * 2));
+		var vpRect = new ij.Rect(new ij.Point(vpX - vpCWidth2, vpY - vpCHeight2), new ij.Dimension(vpCWidth2 * 2, vpCHeight2 * 2));
 		objectCtx.save();
 		objectCtx.translate(-vpRect.point.x * cellSize, -vpRect.point.y * cellSize);
 
@@ -166,7 +166,7 @@ var Scene = (function(){
 
 			// Create contexts
 			if(!bgCanvas.getContext) {
-				App.log.error("Canvas doesn't have getContext method - try different browser!");
+				ij.App.log.error("Canvas doesn't have getContext method - try different browser!");
 				return false;
 			}
 			bgCtx = bgCanvas.getContext('2d');
@@ -191,7 +191,7 @@ var Scene = (function(){
 			}
 
 			// Calculate the viewport size in cells
-			var cellSize = ImageLoader.getCellSize();
+			var cellSize = ij.ImageLoader.getCellSize();
 			vpCWidth2 = vpWidth / cellSize / 2;
 			vpCHeight2 = vpHeight / cellSize / 2;
 		},
@@ -218,7 +218,7 @@ var Scene = (function(){
 			if(animate) {
 				var maxShift = Math.max(Math.abs(x - vpX), Math.abs(y - vpY));
 				var moveTime = maxShift / VIEWPORT_MOVE_SPEED * 1000;
-				vpMoveAnimation = new PositionAnimation(vpX, vpY, x, y, moveTime);
+				vpMoveAnimation = new ij.PositionAnimation(vpX, vpY, x, y, moveTime);
 			} else {
 				vpX = x;
 				vpY = y;
@@ -249,7 +249,7 @@ var Scene = (function(){
 				sceneObjects[obj.ZORDER] = [];
 			}
 			sceneObjects[obj.ZORDER].push(obj);
-			App.log.debug('Object added: ' + obj);
+			ij.App.log.debug('Object added: ' + obj);
 		},
 
 		/** Remove object from the scene */
@@ -260,7 +260,7 @@ var Scene = (function(){
 					return false;
 				}
 			}, obj.ZORDER);
-			App.log.debug('Object removed: ' + obj);
+			ij.App.log.debug('Object removed: ' + obj);
 		},
 
 		/** Remove all objects from the scene */
