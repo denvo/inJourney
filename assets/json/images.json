@@ -143,7 +143,53 @@
 		}
 	},
 
+	"spriteGrids" : {
+		"missile1": {
+			"fileName": "missile1.png",
+			"x": 0,
+			"y": 0,
+			"cellWidth": 128,
+			"cellHeight": 31,
+			"cols": 1,
+			"rows": 17
+		},
+		"blast1": {
+			"fileName": "blast1.png",
+			"x": 0,
+			"y": 0,
+			"cellWidth": 64,
+			"cellHeight": 64,
+			"cols": 10,
+			"rows": 1
+		}
+	},
+
 	"animations": {
+		"missile1": {
+			"frameDuration": 100,
+			"frames": [
+				{ "sprite": "missile1.0" },
+				{ "sprite": "missile1.1" },
+				{ "sprite": "missile1.2" },
+				{ "sprite": "missile1.3" },
+				{ "sprite": "missile1.4" },
+				{ "sprite": "missile1.5" },
+				{ "sprite": "missile1.6" },
+				{ "sprite": "missile1.7" },
+				{ "sprite": "missile1.8" },
+				{ "sprite": "missile1.9" },
+				{ "sprite": "missile1.10" },
+				{ "sprite": "missile1.11", "nextFrame": 6 }
+			]
+		},
+
+		"blast1": {
+			"frameDuration": 75,
+			"loop": false,
+			"sprites": [
+				"blast1.0", "blast1.1", "blast1.2", "blast1.3", "blast1.4", "blast1.5", "blast1.6", "blast1.7", "blast1.8", "blast1.9"
+			]
+		}
 
 	}	
 }

@@ -10,15 +10,23 @@ ij.App = (function() {
 	/** Create multiple-level log facility */
 	function initLog() {
 		var logObject = { };
-		var minLogLevel = Config.logLevel || 'info';
+		var minLogLevel = Config.logLevel || 'error';
 		var levelEnabled = false;
-		[ 'debug', 'info', 'error'].forEach(function(level) {
+		[ 'debug', 'info', 'error', 'panic'].forEach(function(level) {
 			if(level == minLogLevel) {
 				levelEnabled = true;
 			}
-			logObject[level] = levelEnabled ? function(msg) {
-				console.log(level + ": " + msg);
-			} : function() {};
+			if(level == 'panic') {
+				logObject[level] = function(msg) {
+					throw new Error('GAME ERROR: ' + msg);
+				};
+			} else if(levelEnabled) {
+				logObject[level] = function(msg) {
+					console.log(level + ": " + msg);
+				};
+			} else {
+				logObject[level] = function() {};
+			}
 		});
 		return logObject;
 	}
@@ -28,11 +36,13 @@ ij.App = (function() {
 			e = e || window.event;
 			var key = e.keyCode || e.which;
 			keyState[key] = true;
+			e.stopPropagation && e.stopPropagation();
 		});
 		document.addEventListener('keyup', function(e) {
 			e = e || window.event;
 			var key = e.keyCode || e.which;
 			keyState[key] = false;
+			e.stopPropagation && e.stopPropagation();
 		});
 	}
 

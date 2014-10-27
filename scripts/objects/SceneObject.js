@@ -2,8 +2,7 @@
  * Scene object - root class
  */
 (function() {
-	// Put private members here
-
+	// Private static members
 
 	// Define public memebers
 	ij.registerClass('SceneObject', null, {
@@ -20,6 +19,14 @@
 			return this.rect.point.y;
 		},
 
+		getWidth: function() {
+			return this.rect.dimension.width;
+		},
+
+		getHeight: function() {
+			return this.rect.dimension.height;
+		},
+
 		moveTo: function(x, y) {
 			this.rect.moveTo(x, y);
 		},
@@ -30,7 +37,7 @@
 		 */
 		update: function(delta) {
 			// Inplemented in inherited class
-			ij.App.log.error('Not implemented');
+			ij.App.log.panic('Not implemented');
 		},
 
 		/**
@@ -38,7 +45,7 @@
 		 */
 		draw: function(ctx) {
 			// Inplemented in inherited class
-			ij.App.log.error('Not implemented');
+			ij.App.log.panic('Not implemented');
 		}
 	});
 

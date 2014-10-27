@@ -5,6 +5,12 @@ ij.Scene = (function(){
 	// Constants
 	var VIEWPORT_MOVE_SPEED = 25;
 
+	// Set to true to show grid coordinates
+	var SHOW_GRID_COORD = true;
+
+	// DEBUG: status line
+	var debugStatusLine = null;
+
 	// Wrapper
 	var sceneWrapper;
 	// Dimensions of the canvas (viewport) in pixels
@@ -35,6 +41,10 @@ ij.Scene = (function(){
 	// Scene objects - ordered by zOrder
 	var sceneObjects = {};
 
+	// List of object to be added/deleted from the scene during update cycle
+	var objectsToAdd = [];
+	var objectsToDelete = [];
+	var inUpdateCycle = false;
 
 	/** Update the scene */
 	function update() {
@@ -66,11 +76,17 @@ ij.Scene = (function(){
 		lastUpdate = currentUpdate;
 
 		// Debug - show time spent in update method
-		var profileLabel = document.getElementById("profileLabel");
-		if(profileLabel) {
+		if(debugStatusLine) {
 			var spent = (new Date().getTime()) - lastUpdate;
-			profileLabel.innerHTML = "delta=" + delta + "ms, spent=" + spent + "ms (" + 
+			var statusText = "delta=" + delta + "ms, spent=" + spent + "ms (" + 
 				Math.round(spent / delta * 100) + "%)";
+			iterate(function(obj) {
+				if(obj.getDebugInfo) {
+					statusText += '<br/>' + obj.getDebugInfo();
+				}
+			});
+			
+			debugStatusLine.innerHTML = statusText;
 		}
 
 		requestAnimationFrame(update);
@@ -90,12 +106,20 @@ ij.Scene = (function(){
 		bgCtx.save();
 		bgCtx.translate(-left * cellSize, -top * cellSize);
 
+		if(SHOW_GRID_COORD) {
+			bgCtx.font = '10px Verdana';
+		}
+
 		var x, y;
 		for(y = minY; y <= maxY; ++ y) {
 			for(x = minX; x <= maxX; ++ x) {
 				var bgSpriteId = ij.GameModel.getBackgroundSpriteId(x, y);
 				if(bgSpriteId) {
 					ij.ImageLoader.drawSprite(bgSpriteId, bgCtx, x, y);
+				}
+
+				if(SHOW_GRID_COORD) {
+					bgCtx.fillText(x + ',' + y, (x - 0.3) * cellSize, y * cellSize);
 				}
 			}
 		}
@@ -110,12 +134,12 @@ ij.Scene = (function(){
 
 		// The idea is to update all objects according their zOrder and put objects which need to be drawn (using rect and checking
 		// current viewport position) into the list, after that clean invalid rectangles on canvas and draw objects from the list
-		var objectsToDelete = [];
+		inUpdateCycle = true;
 		iterate(function(obj) {
-			if(obj.update && obj.update(delta) === false) {
-				objectsToDelete.push(obj);
-			}
+			obj.update && obj.update(delta);
 		});
+		inUpdateCycle = false;
+
 		objectsToDelete.forEach(function(obj) {
 			ij.Scene.removeObject(obj);
 		});
@@ -132,6 +156,13 @@ ij.Scene = (function(){
 		});
 
 		objectCtx.restore();
+
+		// Add new objects after all
+		objectsToAdd.forEach(function(obj) {
+			ij.Scene.addObject(obj);
+		});
+		objectsToAdd = [];
+		objectsToDelete = [];
 	}
 
 	/** Iterate through all the objects, cb receives an object and its index and should return false to stop */
@@ -176,10 +207,19 @@ ij.Scene = (function(){
 			bgCanvas.width = objectCanvas.width = vpWidth = sceneWrapper.clientWidth;
 			bgCanvas.height = objectCanvas.height = vpHeight = sceneWrapper.clientHeight;
 
+			// Setup debug line
+			debugStatusLine = document.getElementById('debugStatusLine');
+
 			return true;
 		},
 
-		/** Set scene dimensions */
+		/** Get/set scene dimensions */
+		getSceneWidth: function() {
+			return sceneWidth;
+		},
+		getSceneHeight: function() {
+			return sceneHeight;
+		},
 		setDimensions: function(width, height) {
 			if(width.height) {
 				// Dimension object was passed as first param
@@ -245,22 +285,31 @@ ij.Scene = (function(){
 
 		/** Add an object to the scene */
 		addObject: function(obj) {
-			if(!sceneObjects[obj.ZORDER]) {
-				sceneObjects[obj.ZORDER] = [];
+			if(inUpdateCycle) {
+				objectsToAdd.push(obj);
+			} else {
+				if(!sceneObjects[obj.ZORDER]) {
+					sceneObjects[obj.ZORDER] = [];
+				}
+				sceneObjects[obj.ZORDER].push(obj);
+				ij.App.log.debug('Object added: ' + obj);
 			}
-			sceneObjects[obj.ZORDER].push(obj);
-			ij.App.log.debug('Object added: ' + obj);
 		},
 
 		/** Remove object from the scene */
 		removeObject: function(obj) {
-			iterate(function(item, index) {
-				if(item === obj) {
-					sceneObjects[obj.ZORDER].splice(index, 1);
-					return false;
-				}
-			}, obj.ZORDER);
-			ij.App.log.debug('Object removed: ' + obj);
+			// Deferred delete if in the update cycle
+			if(inUpdateCycle) {
+				objectsToDelete.push(obj);
+			} else {
+				iterate(function(item, index) {
+					if(item === obj) {
+						sceneObjects[obj.ZORDER].splice(index, 1);
+						return false;
+					}
+				}, obj.ZORDER);
+				ij.App.log.debug('Object removed: ' + obj);
+			}
 		},
 
 		/** Remove all objects from the scene */

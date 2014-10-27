@@ -1,7 +1,7 @@
 /** Motile object can move - base class for all dynamic objects */
-
 (function() {
-
+	// Private static members
+	
 	/** Move the object. @returns the unused timeframe */
 	function moveObject(delta) {
 		var timeRemaining = 0;
@@ -84,6 +84,10 @@
 			ij.App.log.debug('Start moving to ' + newX + ', ' + newY);
 
 			return true;
+		},
+
+		getDirection: function() {
+			return this.direction;
 		}	
 		
 	});

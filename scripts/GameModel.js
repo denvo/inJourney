@@ -41,6 +41,9 @@ ij.GameModel = (function() {
 	var objectConstructors = {};
 
 	var isLevelCompleted = false;
+
+	/** Hero object */
+	var heroObject = null;
 	
 	/** Load specified level form server and set it up */
 	function loadLevel(levelId, callback) {
@@ -130,10 +133,6 @@ ij.GameModel = (function() {
 		var n;
 		for(n = 0; n < currentLevel.objects.length; ++ n) {
 			var objectData = currentLevel.objects[n];
-			if(objectData.type == ij.HeroObject.prototype.TYPE) {
-				heroFound = true;
-				ij.Scene.setPosition(objectData.position);
-			}
 			var objectConstructor = objectConstructors[objectData.type];
 			if(!objectConstructor) {
 				ij.App.log.error('Cannot find constructor for type ' + objectData.type);
@@ -141,14 +140,21 @@ ij.GameModel = (function() {
 			}
 			var object = new objectConstructor(objectData);
 			ij.Scene.addObject(object);
+			
+			// Store hero object and center the scene
+			if(objectData.type == ij.HeroObject.prototype.TYPE) {
+				heroObject = object;
+				ij.Scene.setPosition(objectData.position);
+			}
 		}
 
 		isLevelCompleted = false;
 
-		if(!heroFound) {
-			ij.App.log.error('No hero object was found in the level');
+		if(!heroObject) {
+			ij.App.log.panic('No hero object was found in the level');
+			return false;
 		}
-		return heroFound;
+		return true;
 	}
 
 
@@ -184,10 +190,20 @@ ij.GameModel = (function() {
 			return !bgType || bgType.match(/[a-z]/);
 		},
 
-		levelCompleted: function() {
+		checkWinCondition: function() {
+			switch(currentLevel.winCondition.type) {
+				case 'position':
+					if(heroObject.getX() == currentLevel.winCondition.position.x && heroObject.getY() == currentLevel.winCondition.position.y) {
+						ij.GameModel.levelCompleted(true);
+					}
+					break;
+			}
+		},
+
+		levelCompleted: function(isWon) {
 			if(!isLevelCompleted) {
 				isLevelCompleted = true;
-				alert('You won!');
+				isWon ? alert('You won!') : alert('You loose');
 			}
 		},
 
